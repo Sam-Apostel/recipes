@@ -1,0 +1,168 @@
+@import "https://unpkg.com/open-props/easings.min.css";
+@import "https://unpkg.com/open-props/animations.min.css";
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	}
+}
+body, html, main {
+	overflow: hidden;
+}
+
+body {
+	color: rgb(var(--foreground-rgb));
+	background: linear-gradient(
+					to bottom,
+					transparent,
+					rgb(var(--background-end-rgb))
+	)
+	rgb(var(--background-start-rgb));
+
+}
+
+$menu-spacing: 100deg;
+$menu-offset: 4rem;
+$image-size: 512px;
+
+main {
+	scroll-snap-type: y mandatory;
+	scroll-behavior: smooth;
+	> section {
+		scroll-snap-align: start;
+	}
+}
+
+article img {
+	padding: $menu-offset;
+}
+.circle-typed main nav {
+	transform-origin: center;
+	position: sticky;
+	height: min(calc($image-size + ($menu-offset * 2)), 100vw);
+	top: calc(100vh - min(calc($image-size + ($menu-offset * 2)), 100vw));
+	animation-name: rotateMenu;
+	animation-direction: alternate;
+	animation-timeline: scroll(block nearest);
+
+	> li {
+		transform-origin: center center;
+		transform: rotate(calc(var(--index) * $menu-spacing));
+	}
+}
+
+@keyframes rotateMenu {
+	@for $i from 0 through 46 {
+		#{$i * (100 / 46)}% {
+			transform: rotate($i * $menu-spacing * -1);
+		}
+	}
+}
+
+main > section {
+	grid-column-start: 1;
+}
+
+@for $i from 0 through 46 {
+	main > nav > li[data-index="#{$i}"] {
+		animation-name: menuOpacity-#{$i};
+		animation-timeline: scroll(block nearest);
+	}
+	main > article[data-index="#{$i}"] {
+		animation-name: mainOpacity-#{$i};
+		animation-timeline: scroll(block nearest);
+	}
+	main > section[data-index="#{$i}"] {
+		grid-row-start: $i + 1;
+	}
+	@keyframes menuOpacity-#{$i} {
+		from {
+			opacity: 0;
+			pointer-events: none;
+		}
+		@if $i > 1 {
+			from {
+				opacity: 0;
+				pointer-events: none;
+			}
+			#{($i - 1.5) * (100% / 46)} {
+				opacity: 0;
+				pointer-events: none;
+			}
+		}
+		@if $i > 0 {
+			#{($i - 1) * (100% / 46)} {
+				opacity: .2;
+				pointer-events: all;
+			}
+		}
+
+		#{$i * (100% / 46)} {
+			opacity: 1;
+			pointer-events: all;
+		}
+		@if $i < 46 {
+			#{($i + 1) * (100% / 46)} {
+				opacity: .2;
+				pointer-events: all;
+			}
+		}
+		@if $i < 45 {
+
+			#{($i + 1.5) * (100% / 46)} {
+				opacity: 0;
+				pointer-events: none;
+			}
+			to {
+				opacity: 0;
+				pointer-events: none;
+			}
+		}
+
+	}
+	@keyframes mainOpacity-#{$i} {
+		from {
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		@if $i >= 1 {
+			#{($i - 1) * (100% / 46)} {
+				opacity: 0;
+				pointer-events: none;
+			}
+		}
+		#{$i * (100% / 46)} {
+			opacity: 1;
+			pointer-events: all;
+		}
+		@if $i < 46 {
+			#{($i + 1) * (100% / 46)} {
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			to {
+				opacity: 0;
+				pointer-events: none;
+			}
+		}
+	}
+}
+
+.text-balance {
+	text-wrap: balance;
+}
